@@ -1,6 +1,6 @@
 {
   "name": "@khalidx/runbook",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Executable markdown documents that you can run, template, and share!",
   "license": "MIT",
   "repository": "github:khalidx/runbook",
