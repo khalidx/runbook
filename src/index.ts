@@ -74,7 +74,7 @@ export async function run (args: string[]) {
   }
   if (suggestions.length === 0) {} // todo: get suggestions from available commands
   const suggestionsMessage = suggestions.reduce((text, suggestion) => {
-    return text + '\n' + `${suggestion.file.path} | ${colors.green(suggestion.command.name)} ${suggestion.command.args?.map(arg => `--${arg}`).join(' ')}`
+    return text + '\n' + `${suggestion.file.path} | ${colors.green(suggestion.command.name)} ${(suggestion.command.args || []).map(arg => `--${arg}`).join(' ')}`
   }, '')
   throw error(`No command found that matches the provided arguments.${suggestionsMessage ? ` Here are some suggestions:${suggestionsMessage}` : ''}`)
 }
