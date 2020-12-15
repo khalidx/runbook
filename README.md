@@ -2,7 +2,7 @@
 
 Executable markdown documents that you can run, template, and share!
 
-<img src="logo.png" width="350px" alt="Runbook - Executable markdown documents that you can run, template, and share!">
+<img src="https://raw.githubusercontent.com/khalidx/runbook/main/logo.png" alt="Runbook - Executable markdown documents that you can run, template, and share!" width="350px">
 
 [![npm package version badge](https://img.shields.io/npm/v/@khalidx/runbook.svg?style=flat-square)](https://www.npmjs.com/package/@khalidx/runbook)
 [![GitHub last commit badge](https://img.shields.io/github/last-commit/khalidx/runbook.svg?style=flat-square)](https://github.com/khalidx/runbook/commits/main)
