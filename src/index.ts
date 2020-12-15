@@ -1,6 +1,7 @@
 import { dirname, resolve } from 'path'
 import { execFileSync } from 'child_process'
 import yargs from 'yargs'
+import shell from 'shelljs'
 
 import files from './features/files'
 import markdown from './features/markdown'
@@ -24,6 +25,7 @@ export async function ls (options = { log: true }) {
           if (options.log) console.log(file.path, '|', colors.green(name), args.map(arg => `--${arg}`).join(' '))
           return {
             name,
+            lang: block.lang,
             position: block.position,
             script: block.value,
             cwd: dirname(resolve(file.path)),
@@ -53,6 +55,10 @@ export async function run (args: string[]) {
         suggestions.push({ file: { path: file.path }, command })
         continue
       }
+      if (command.lang === 'bash' || command.lang === 'hbs') {
+        if (!shell.which('bash')) throw error(`[${file.path}:${command.position?.start.line}] Could not find "bash" on this system`)
+      }
+      else throw error(`[${file.path}:${command.position?.start.line}] Unsupported block language: ${command.lang}`)
       console.log(`[${file.path}:${command.position?.start.line}] Running ${colors.green(command.name)}`)
       // todo: can we do without this step? also check compatibility, is linux only?
       const shellScriptFileName = id()
@@ -68,7 +74,7 @@ export async function run (args: string[]) {
   }
   if (suggestions.length === 0) {} // todo: get suggestions from available commands
   const suggestionsMessage = suggestions.reduce((text, suggestion) => {
-    return text + '\n' + `${suggestion.file.path} | ${colors.green(suggestion.command.name)} ${suggestion.command.args?.map(arg => `--${arg}`).join(' ')}`
+    return text + '\n' + `${suggestion.file.path} | ${colors.green(suggestion.command.name)} ${(suggestion.command.args || []).map(arg => `--${arg}`).join(' ')}`
   }, '')
-  throw error(`No command found that matches the provided arguments. Here are some suggestions:${suggestionsMessage}`)
+  throw error(`No command found that matches the provided arguments.${suggestionsMessage ? ` Here are some suggestions:${suggestionsMessage}` : ''}`)
 }
