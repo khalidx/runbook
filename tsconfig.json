@@ -7,6 +7,7 @@
     "esModuleInterop": true,
     "lib": [ "ES2019" ],
     "target": "ES2019",
+    "importHelpers": true,
     "strict": true
   }
 }
