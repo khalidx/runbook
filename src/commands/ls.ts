@@ -6,7 +6,9 @@ import handlebars from '../features/handlebars'
 import colors from '../features/colors'
 import { ApplicationError } from '../features/errors'
 
-export async function ls (options = { log: true }) {
+import { ensureUniqueBlockSignatures } from '../rules/unique-block-signatures'
+
+export async function ls (options = { log: true, rules: true }) {
   const markdownFiles = await files.discover(['*.md'])
     .then(paths => Promise.all(paths.map(async path => ({ path, content: await files.read(path, 'utf-8') }))))
     .then(files => files.map(file => ({ ...file, blocks: markdown.blocks(file.content) })))
@@ -32,5 +34,6 @@ export async function ls (options = { log: true }) {
       }
     }))
   if (markdownFiles.length === 0) throw new ApplicationError(`No markdown files found in ${process.cwd()}`)
+  if (options.rules) ensureUniqueBlockSignatures(markdownFiles)
   return markdownFiles
 }
