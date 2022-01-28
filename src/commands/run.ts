@@ -32,17 +32,20 @@ export async function run (args: string[]) {
         if (!shell.which('node')) throw new ApplicationError(`[${file.path}:${command.position?.start.line}] Could not find "node" on this system`)
       } else if (command.lang === 'python') {
         if (!shell.which('python')) throw new ApplicationError(`[${file.path}:${command.position?.start.line}] Could not find "python" on this system`)
+      } else if (command.lang === 'go') {
+        if (!shell.which('go')) throw new ApplicationError(`[${file.path}:${command.position?.start.line}] Could not find "go" on this system`)
       } else throw new ApplicationError(`[${file.path}:${command.position?.start.line}] Unsupported block language: ${command.lang}`)
       console.info(`[${file.path}:${command.position?.start.line}] Running ${colors.green(command.name)}`)
       // todo: can we do without this step? also check compatibility, is linux only for bash?
       // also shouldn't write because can potentially (although almost impossible bc of uuid) overwrite an equally named file in the current directory
-      const executableFileName = id()
+      const executableFileName = id() + (command.lang === 'go' ? '.go' : '')
       await files.write(executableFileName, command.template?.(options) || command.script)
       await files.chmod(executableFileName, 0o755)
       try {
         if (command.lang === 'bash' || command.lang === 'hbs') execFileSync(resolve(executableFileName), { stdio: 'inherit' })
         else if (command.lang === 'javascript') execFileSync('node', [ executableFileName ], { stdio: 'inherit' })
         else if (command.lang === 'python') execFileSync('python', [ executableFileName ], { stdio: 'inherit' })
+        else if (command.lang === 'go') execFileSync('go', [ 'run', executableFileName ], { stdio: 'inherit' })
         else throw new ApplicationError(`[${file.path}:${command.position?.start.line}] Unsupported block language (not executable): ${command.lang}`)
       } finally {
         await files.delete(executableFileName)

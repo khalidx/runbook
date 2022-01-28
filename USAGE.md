@@ -43,8 +43,20 @@ Notice that the block language is `javascript` and is also marked with `hbs` to 
 
 Here's another example, this time using `python`:
 
-```python "another hello"
-print("Hello again!")
+```python "hello from python"
+print("Hello from python!")
+```
+
+Here's another example, this time using `go`:
+
+```go "hello from go"
+package main
+
+import "fmt"
+
+func main() {
+    fmt.Println("Hello from go!")
+}
 ```
 
 ## supported runtimes
@@ -54,6 +66,7 @@ Currently, `runbook run` only supports the execution of `bash` and `javascript` 
 - `bash` blocks are executed with `bash`
 - `javascript` and `js` blocks are executed with `node`
 - `python` blocks are executed with `python`
+- `go` blocks are executed with `go`
 
 `runbook` expects the required runtime to be installed on the current system. In the future, `runbook` will automatically download and use runtimes that are not already installed locally.
 

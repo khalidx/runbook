@@ -15,7 +15,7 @@ export async function ls (options = { log: true, rules: true }) {
     .then(files => files.map(file => {
       return {
         ...file,
-        commands: file.blocks.filter(block => (block.lang === 'bash' || block.lang === 'hbs' || block.lang === 'python' || normalizedLang(block) === 'javascript') && block.meta?.includes('"')).map(block => {
+        commands: file.blocks.filter(block => (block.lang === 'bash' || block.lang === 'hbs' || block.lang === 'python' || block.lang === 'go' || normalizedLang(block) === 'javascript') && block.meta?.includes('"')).map(block => {
           const names = block.meta?.match(/"([^"]*)"/g)
           if (names?.length !== 1) throw new ApplicationError(`[${file.path}:${block.position?.start.line}] A code block must have exactly one name`)
           const name = names[0].substring(1, names[0].length - 1)
