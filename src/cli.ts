@@ -10,8 +10,10 @@ async function cli (args: string[]) {
   throw new ApplicationError('Invalid command')
 }
 
-cli(process.argv.slice(2)).catch(error => {
-  if (error instanceof ApplicationError) console.error(error.message)
-  else console.error(error)
-  process.exit(1)
-})
+if (require.main === module) {
+  cli(process.argv.slice(2)).catch(error => {
+    if (error instanceof ApplicationError) console.error(error.message)
+    else console.error(error)
+    process.exit(1)
+  })  
+}
