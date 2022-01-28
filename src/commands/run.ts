@@ -28,17 +28,21 @@ export async function run (args: string[]) {
       }
       if (command.lang === 'bash' || command.lang === 'hbs') {
         if (!shell.which('bash')) throw new ApplicationError(`[${file.path}:${command.position?.start.line}] Could not find "bash" on this system`)
-      }
-      else throw new ApplicationError(`[${file.path}:${command.position?.start.line}] Unsupported block language: ${command.lang}`)
+      } else if (command.lang === 'javascript') {
+        if (!shell.which('node')) throw new ApplicationError(`[${file.path}:${command.position?.start.line}] Could not find "node" on this system`)
+      } else throw new ApplicationError(`[${file.path}:${command.position?.start.line}] Unsupported block language: ${command.lang}`)
       console.log(`[${file.path}:${command.position?.start.line}] Running ${colors.green(command.name)}`)
-      // todo: can we do without this step? also check compatibility, is linux only?
-      const shellScriptFileName = id()
-      await files.write(shellScriptFileName, command.template?.(options) || command.script)
-      await files.chmod(shellScriptFileName, 0o755)
+      // todo: can we do without this step? also check compatibility, is linux only for bash?
+      // also shouldn't write because can potentially (although almost impossible bc of uuid) overwrite an equally named file in the current directory
+      const executableFileName = id()
+      await files.write(executableFileName, command.template?.(options) || command.script)
+      await files.chmod(executableFileName, 0o755)
       try {
-        execFileSync(resolve(shellScriptFileName), { stdio: 'inherit' })
+        if (command.lang === 'bash' || command.lang === 'hbs') execFileSync(resolve(executableFileName), { stdio: 'inherit' })
+        else if (command.lang === 'javascript') execFileSync('node', [ executableFileName ], { stdio: 'inherit' })
+        else throw new ApplicationError(`[${file.path}:${command.position?.start.line}] Unsupported block language (not executable): ${command.lang}`)
       } finally {
-        await files.delete(shellScriptFileName)
+        await files.delete(executableFileName)
       }
       return
     }
