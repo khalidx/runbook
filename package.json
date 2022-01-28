@@ -25,7 +25,8 @@
     "test": "mocha -r ts-node/register src/**/*.test.ts"
   },
   "files": [
-    "dist/"
+    "dist/",
+    "USAGE.md"
   ],
   "dependencies": {
     "chalk": "^4.1.0",
