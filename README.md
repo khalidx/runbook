@@ -48,7 +48,7 @@ document.md | hello
 document.md | two plus two
 ```
 
-Code blocks that are not annotated with `bash` and a quoted name
+Code blocks that are not annotated with a [supported runtime](USAGE.md#supported-runtimes) and a quoted name
 will be ignored by runbook.
 
 ### runbook run

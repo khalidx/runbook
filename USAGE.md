@@ -61,7 +61,7 @@ func main() {
 
 ## supported runtimes
 
-Currently, `runbook run` only supports the execution of `bash` and `javascript` blocks. Other blocks are ignored.
+Currently, `runbook run` supports the execution of `bash`, `javascript`, `python`, and `go` blocks. Other blocks are ignored.
 
 - `bash` blocks are executed with `bash`
 - `javascript` and `js` blocks are executed with `node`
