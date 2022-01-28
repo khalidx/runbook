@@ -30,6 +30,8 @@ export async function run (args: string[]) {
         if (!shell.which('bash')) throw new ApplicationError(`[${file.path}:${command.position?.start.line}] Could not find "bash" on this system`)
       } else if (command.lang === 'javascript') {
         if (!shell.which('node')) throw new ApplicationError(`[${file.path}:${command.position?.start.line}] Could not find "node" on this system`)
+      } else if (command.lang === 'python') {
+        if (!shell.which('python')) throw new ApplicationError(`[${file.path}:${command.position?.start.line}] Could not find "python" on this system`)
       } else throw new ApplicationError(`[${file.path}:${command.position?.start.line}] Unsupported block language: ${command.lang}`)
       console.info(`[${file.path}:${command.position?.start.line}] Running ${colors.green(command.name)}`)
       // todo: can we do without this step? also check compatibility, is linux only for bash?
@@ -40,6 +42,7 @@ export async function run (args: string[]) {
       try {
         if (command.lang === 'bash' || command.lang === 'hbs') execFileSync(resolve(executableFileName), { stdio: 'inherit' })
         else if (command.lang === 'javascript') execFileSync('node', [ executableFileName ], { stdio: 'inherit' })
+        else if (command.lang === 'python') execFileSync('python', [ executableFileName ], { stdio: 'inherit' })
         else throw new ApplicationError(`[${file.path}:${command.position?.start.line}] Unsupported block language (not executable): ${command.lang}`)
       } finally {
         await files.delete(executableFileName)

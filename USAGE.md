@@ -41,12 +41,19 @@ console.log(`{{ greeting }} {{ name }} at ${time}!`)
 
 Notice that the block language is `javascript` and is also marked with `hbs` to indicate that it should be templated.
 
+Here's another example, this time using `python`:
+
+```python "another hello"
+print("Hello again!")
+```
+
 ## supported runtimes
 
 Currently, `runbook run` only supports the execution of `bash` and `javascript` blocks. Other blocks are ignored.
 
 - `bash` blocks are executed with `bash`
 - `javascript` and `js` blocks are executed with `node`
+- `python` blocks are executed with `python`
 
 `runbook` expects the required runtime to be installed on the current system. In the future, `runbook` will automatically download and use runtimes that are not already installed locally.
 
