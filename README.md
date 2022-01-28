@@ -48,7 +48,7 @@ document.md | hello
 document.md | two plus two
 ```
 
-Code blocks that are not annotated with `bash` and a quoted name
+Code blocks that are not annotated with a [supported runtime](USAGE.md#supported-runtimes) and a quoted name
 will be ignored by runbook.
 
 ### runbook run
@@ -63,22 +63,15 @@ For example, to run the "hello" command shown above, type:
 runbook run hello
 ```
 
-## goals
+## features
 
-- [x] list all commands found in documents in the current directory
-- [x] run a command from a document
-- [x] commands can be templated with arguments
-- [x] commands can be overloaded
-- [x] command suggestions are returned if input doesn't match a command
-
-*Coming soon*
-
-- [ ] if arguments are expected, they are prompted
-- [ ] override prompts by passing --json
-- [ ] support traditional CLI args and flags, as well as `=`
-- [ ] spawned shell should contain all commands already aliased in?
-- [ ] option for executing all commands in docker?
-- [ ] examples, tests, and full code coverage
+- define and document reusable commands in your favorite language, with many [currently supported](USAGE.md#supported-runtimes)
+- list all commands found in markdown documents in the current directory with `runbook ls`
+- run a specific command from a document with `runbook run`
+- commands can be templated with arguments using handlebars `{{ }}` syntax
+- commands can be overloaded
+- command suggestions are returned if input doesn't match a command
+- commands are checked for uniqueness (name + arity + args)
 
 ## contributing
 

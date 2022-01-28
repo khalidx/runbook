@@ -5,29 +5,36 @@
   "license": "MIT",
   "repository": "github:khalidx/runbook",
   "main": "dist/index.js",
-  "bin": "dist/cli.js",
+  "bin": {
+    "runbook": "dist/cli.js",
+    "r": "dist/cli.js"
+  },
   "publishConfig": {
     "access": "public"
   },
   "scripts": {
     "prepare": "run-s build:node",
-    "build": "run-s build:*",
-    "build:clean": "rimraf dist/ exec/",
-    "build:node": "tsc",
-    "build:native": "pkg . --out-path exec/",
+    "build": "run-s build:node build:native",
+    "clean": "run-s build:node:clean build:native:clean",
+    "build:node:clean": "rimraf dist/",
+    "build:node:typescript": "tsc",
+    "build:node": "run-s build:node:*",
+    "build:native:clean": "rimraf exec/",
+    "build:native:binaries": "pkg . --out-path exec/",
+    "build:native": "run-s build:native:*",
     "test": "mocha -r ts-node/register src/**/*.test.ts"
   },
   "files": [
-    "dist/",
-    "logo.png"
+    "dist/"
   ],
   "dependencies": {
     "chalk": "^4.1.0",
     "fs-extra": "^9.0.1",
     "globby": "^11.0.1",
-    "handlebars": "^4.7.6",
+    "handlebars": "^4.7.7",
     "remark": "^13.0.0",
-    "shelljs": "^0.8.4",
+    "shelljs": "^0.8.5",
+    "tslib": "^2.3.1",
     "unist-util-visit": "^2.0.3",
     "uuid": "^8.3.1",
     "yargs": "^16.2.0"

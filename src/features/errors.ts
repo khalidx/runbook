@@ -3,7 +3,3 @@ export class ApplicationError extends Error {
     super(message)
   }
 }
-
-export function error (message: string): ApplicationError {
-  return new ApplicationError(message)
-}
