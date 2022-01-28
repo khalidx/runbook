@@ -5,7 +5,10 @@
   "license": "MIT",
   "repository": "github:khalidx/runbook",
   "main": "dist/index.js",
-  "bin": "dist/cli.js",
+  "bin": {
+    "runbook": "dist/cli.js",
+    "r": "dist/cli.js"
+  },
   "publishConfig": {
     "access": "public"
   },
