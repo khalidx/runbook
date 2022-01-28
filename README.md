@@ -70,6 +70,8 @@ runbook run hello
 - [x] commands can be templated with arguments
 - [x] commands can be overloaded
 - [x] command suggestions are returned if input doesn't match a command
+- [x] commands are checked for uniqueness (name + arity + args)
+- [x] support for executing bash and javascript commands
 
 *Coming soon*
 
@@ -79,6 +81,8 @@ runbook run hello
 - [ ] spawned shell should contain all commands already aliased in?
 - [ ] option for executing all commands in docker?
 - [ ] examples, tests, and full code coverage
+- [ ] support for specifying a specific runtime version
+- [ ] clickable links to position in file in errors
 
 ## contributing
 
