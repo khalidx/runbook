@@ -1,7 +1,9 @@
-import { green } from 'chalk'
+import { green, blue, yellow } from 'chalk'
 
 export const colors = {
-  green
+  green,
+  blue,
+  yellow
 }
 
 export default colors

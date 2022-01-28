@@ -83,6 +83,8 @@ runbook run hello
 - [ ] examples, tests, and full code coverage
 - [ ] support for specifying a specific runtime version
 - [ ] clickable links to position in file in errors
+- [ ] better suggestions for "Invalid command", like if command is empty, show help or recently used
+- [ ] ensure emojis work on all platforms and are removed for non-interactive terminals
 
 ## contributing
 
