@@ -31,7 +31,7 @@ export async function run (args: string[]) {
       } else if (command.lang === 'javascript') {
         if (!shell.which('node')) throw new ApplicationError(`[${file.path}:${command.position?.start.line}] Could not find "node" on this system`)
       } else throw new ApplicationError(`[${file.path}:${command.position?.start.line}] Unsupported block language: ${command.lang}`)
-      console.log(`[${file.path}:${command.position?.start.line}] Running ${colors.green(command.name)}`)
+      console.info(`[${file.path}:${command.position?.start.line}] Running ${colors.green(command.name)}`)
       // todo: can we do without this step? also check compatibility, is linux only for bash?
       // also shouldn't write because can potentially (although almost impossible bc of uuid) overwrite an equally named file in the current directory
       const executableFileName = id()

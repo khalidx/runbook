@@ -20,7 +20,7 @@ export async function ls (options = { log: true, rules: true }) {
           if (names?.length !== 1) throw new ApplicationError(`[${file.path}:${block.position?.start.line}] A code block must have exactly one name`)
           const name = names[0].substring(1, names[0].length - 1)
           const args = handlebars.args(block.value)
-          if (options.log) console.log(file.path, '|', colors.green(name), args.map(arg => `--${arg}`).join(' '))
+          if (options.log) console.info(file.path, '|', colors.green(name), args.map(arg => `--${arg}`).join(' '))
           return {
             name,
             lang: normalizedLang(block),
