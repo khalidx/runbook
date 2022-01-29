@@ -22,7 +22,7 @@ export async function run (args: string[]) {
       // todo: may be better to use yargs for everything instead. also even for command syntax in blocks.
       // todo: ensure destructuring only grabs the options (so passing the options to the template later below doesn't introduce undefined behavior)
       const { _, $0, ...options } = argv
-      if (command.args?.some(arg => !argv[arg]) || Object.keys(options).some(option => !command.args?.includes(option))) {
+      if (command.args.some(arg => !argv[arg]) || Object.keys(options).some(option => !command.args.includes(option))) {
         suggestions.push({ file: { path: file.path }, command })
         continue
       }
