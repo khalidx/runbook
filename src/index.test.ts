@@ -16,7 +16,7 @@ describe('runbook', () => {
     it('can list commands', async () => {
       const { markdownFiles, commandList } = await ls({ log: false, rules: true })
       const commands = markdownFiles.flatMap(file => file.commands)
-      expect(commands.length).to.deep.equal(11)
+      expect(commands.length).to.deep.equal(15)
       expect(commands.length).to.deep.equal(commandList.length)
     })
 
