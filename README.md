@@ -18,9 +18,9 @@ The [USAGE.md](./USAGE.md) file is a runnable markdown document. Check it for so
 
 ## commands
 
-[ls](#runbook-ls) | [run](#runbook-run)
+[📂 ls](#runbook-ls) | [🚀 run](#runbook-run) | [🌐 serve](#runbook-serve) | [💁 help](#runbook-help)
 
-### runbook ls
+### 📂 runbook ls
 
 Lists all commands found in documents in the current directory.
 
@@ -51,7 +51,7 @@ document.md | two plus two
 Code blocks that are not annotated with a [supported runtime](USAGE.md#supported-runtimes) and a quoted name
 will be ignored by runbook.
 
-### runbook run
+### 🚀 runbook run
 
 Runs the specified command.
 
@@ -62,6 +62,14 @@ For example, to run the "hello" command shown above, type:
 ```bash
 runbook run hello
 ```
+
+### 🌐 runbook serve
+
+Starts up a server and automatically opens the browser to a page that displays all discovered documentation and commands.
+
+### 💁 runbook help
+
+Shows what you can do with the `runbook` CLI.
 
 ## features
 
@@ -74,6 +82,7 @@ runbook run hello
 - commands are checked for uniqueness (name + arity + args)
 - commands written in `bash` can call other commands
 - commands can be referenced from external files, rather than embedded
+- serve all discovered documentation and commands with `runbook serve`
 
 ## contributing
 

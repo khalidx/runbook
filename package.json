@@ -29,13 +29,22 @@
     "USAGE.md"
   ],
   "dependencies": {
+    "@koa/router": "^10.1.1",
     "chalk": "^4.1.0",
     "fs-extra": "^9.0.1",
     "globby": "^11.0.1",
     "handlebars": "^4.7.7",
+    "koa": "^2.13.4",
+    "rehype-sanitize": "^4.0.0",
+    "rehype-stringify": "^8.0.0",
     "remark": "^13.0.0",
+    "remark-frontmatter": "^3.0.0",
+    "remark-gfm": "^1.0.0",
+    "remark-parse": "^9.0.0",
+    "remark-rehype": "^8.1.0",
     "shelljs": "^0.8.5",
     "tslib": "^2.3.1",
+    "unified": "^9.2.2",
     "unist-util-visit": "^2.0.3",
     "uuid": "^8.3.1",
     "yargs": "^16.2.0"
@@ -43,6 +52,8 @@
   "devDependencies": {
     "@types/chai": "^4.2.14",
     "@types/fs-extra": "^9.0.4",
+    "@types/koa": "^2.13.4",
+    "@types/koa__router": "^8.0.11",
     "@types/mocha": "^8.2.0",
     "@types/node": "^14.14.10",
     "@types/shelljs": "^0.8.8",
