@@ -1,8 +1,8 @@
 import colors from '../features/colors'
-import { logo } from '../features/ascii-art'
+import terminal from '../features/terminal'
 
 export function help (options = { log: true }): string {
-  const message = colors.blue(logo) + '\n' +
+  const message = colors.blue(terminal.ascii.art.logo) + '\n' +
     colors.blue('📂 ls') + '                 | ' + colors.yellow('Lists all commands found in documents in the current directory.') + '\n' +
     colors.blue('🚀 run') + '                | ' + colors.yellow('Runs the specified command.') + '\n' +
     colors.blue('🌐 serve') + '              | ' + colors.yellow('Serves the discovered documentation and commands.') + '\n' +
