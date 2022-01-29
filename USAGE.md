@@ -61,10 +61,11 @@ func main() {
 
 ## supported runtimes
 
-Currently, `runbook run` supports the execution of `bash`, `javascript`, `python`, and `go` blocks. Other blocks are ignored.
+Currently, `runbook run` supports the execution of `bash`, `javascript`, `typescript`, `python`, and `go` blocks. Other blocks are ignored.
 
 - `bash` blocks are executed with `bash`
 - `javascript` and `js` blocks are executed with `node`
+- `typescript` and `ts` blocks are executed with `npx ts-node`
 - `python` blocks are executed with `python`
 - `go` blocks are executed with `go`
 

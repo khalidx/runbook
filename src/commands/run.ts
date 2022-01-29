@@ -30,6 +30,9 @@ export async function run (args: string[]) {
         if (!shell.which('bash')) throw new ApplicationError(`[${file.path}:${command.position?.start.line}] Could not find "bash" on this system`)
       } else if (command.lang === 'javascript') {
         if (!shell.which('node')) throw new ApplicationError(`[${file.path}:${command.position?.start.line}] Could not find "node" on this system`)
+      } else if (command.lang === 'typescript') {
+        if (!shell.which('node')) throw new ApplicationError(`[${file.path}:${command.position?.start.line}] Could not find "node" on this system`)
+        if (!shell.which('npx')) throw new ApplicationError(`[${file.path}:${command.position?.start.line}] Could not find "npx" on this system`)
       } else if (command.lang === 'python') {
         if (!shell.which('python')) throw new ApplicationError(`[${file.path}:${command.position?.start.line}] Could not find "python" on this system`)
       } else if (command.lang === 'go') {
@@ -44,6 +47,7 @@ export async function run (args: string[]) {
       try {
         if (command.lang === 'bash' || command.lang === 'hbs') execFileSync(resolve(executableFileName), { stdio: 'inherit' })
         else if (command.lang === 'javascript') execFileSync('node', [ executableFileName ], { stdio: 'inherit' })
+        else if (command.lang === 'typescript') execFileSync('npx', [ 'ts-node', executableFileName ], { stdio: 'inherit' })
         else if (command.lang === 'python') execFileSync('python', [ executableFileName ], { stdio: 'inherit' })
         else if (command.lang === 'go') execFileSync('go', [ 'run', executableFileName ], { stdio: 'inherit' })
         else throw new ApplicationError(`[${file.path}:${command.position?.start.line}] Unsupported block language (not executable): ${command.lang}`)

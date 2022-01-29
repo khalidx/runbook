@@ -38,7 +38,8 @@ export async function ls (options = { log: true, rules: true }) {
   return markdownFiles
 }
 
-function normalizedLang (block: { lang?: string }) {
+function normalizedLang (block: { lang?: string }): string | undefined {
   if (block.lang === 'js') return 'javascript'
+  if (block.lang === 'ts') return 'typescript'
   return block.lang
 }
