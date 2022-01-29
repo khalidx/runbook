@@ -14,13 +14,10 @@ export async function run (args: string[]) {
   const argv = yargs(args).argv
   const suggestions = []
   for (let file of await ls({ log: false, rules: true })) {
-    // todo: make this deterministic
     for (let command of file.commands) {
       // name check
       if (command.name !== argv._.join(' ')) continue
       // args check
-      // todo: may be better to use yargs for everything instead. also even for command syntax in blocks.
-      // todo: ensure destructuring only grabs the options (so passing the options to the template later below doesn't introduce undefined behavior)
       const { _, $0, ...options } = argv
       if (command.args.some(arg => !argv[arg]) || Object.keys(options).some(option => !command.args.includes(option))) {
         suggestions.push({ file: { path: file.path }, command })
@@ -39,8 +36,6 @@ export async function run (args: string[]) {
         if (!shell.which('go')) throw new ApplicationError(`[${file.path}:${command.position?.start.line}] Could not find "go" on this system`)
       } else throw new ApplicationError(`[${file.path}:${command.position?.start.line}] Unsupported block language: ${command.lang}`)
       console.info(`[${file.path}:${command.position?.start.line}] Running ${colors.green(command.name)}`)
-      // todo: can we do without this step? also check compatibility, is linux only for bash?
-      // also shouldn't write because can potentially (although almost impossible bc of uuid) overwrite an equally named file in the current directory
       const executableFileName = id() + (command.lang === 'go' ? '.go' : '')
       await files.write(executableFileName, command.template?.(options) || command.script)
       await files.chmod(executableFileName, 0o755)
@@ -57,7 +52,7 @@ export async function run (args: string[]) {
       return
     }
   }
-  if (suggestions.length === 0) {} // todo: get suggestions from available commands
+  if (suggestions.length === 0) {}
   const suggestionsMessage = suggestions.reduce((text, suggestion) => {
     return text + '\n' + `${suggestion.file.path} | ${colors.green(suggestion.command.name)} ${(suggestion.command.args || []).map(arg => `--${arg}`).join(' ')}`
   }, '')
