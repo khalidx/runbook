@@ -81,3 +81,12 @@ The following block uses a `file://` reference to load its contents from a local
 
 ```typescript "hello from an external file" file://src/features/hello.ts
 ```
+
+## calling other scripts
+
+A runbook script written in `bash` can easily call other runbook scripts.
+
+```bash "calling other scripts"
+runbook run hello
+runbook run hello --greeting "Hey there" --name "Jim"
+```
