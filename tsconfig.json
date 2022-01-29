@@ -8,6 +8,7 @@
     "lib": [ "ES2019" ],
     "target": "ES2019",
     "importHelpers": true,
+    "forceConsistentCasingInFileNames": true,
     "strict": true
   }
 }
