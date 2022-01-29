@@ -37,7 +37,7 @@ export async function run (args: string[]) {
         if (!shell.which('go')) throw new ApplicationError(`[${file.path}:${command.position?.start.line}] Could not find "go" on this system`)
       } else throw new ApplicationError(`[${file.path}:${command.position?.start.line}] Unsupported block language: ${command.lang}`)
       console.info(`[${file.path}:${command.position?.start.line}] Running ${colors.green(command.name)}`)
-      const executableFileName = id() + (command.lang === 'go' ? '.go' : '')
+      const executableFileName = 'runbook-' + id() + (command.lang === 'go' ? '.go' : '')
       await files.write(executableFileName, command.template?.(options) || command.script)
       await files.chmod(executableFileName, 0o755)
       try {
