@@ -61,13 +61,32 @@ func main() {
 
 ## supported runtimes
 
-Currently, `runbook run` supports the execution of `bash`, `javascript`, `python`, and `go` blocks. Other blocks are ignored.
+Currently, `runbook run` supports the execution of `bash`, `javascript`, `typescript`, `python`, and `go` blocks. Other blocks are ignored.
 
 - `bash` blocks are executed with `bash`
 - `javascript` and `js` blocks are executed with `node`
+- `typescript` and `ts` blocks are executed with `npx ts-node`
 - `python` blocks are executed with `python`
 - `go` blocks are executed with `go`
 
 `runbook` expects the required runtime to be installed on the current system. In the future, `runbook` will automatically download and use runtimes that are not already installed locally.
 
 More runtimes are coming soon!
+
+## external content
+
+Rather than embedded some code or a script inside a markdown fenced code block in the document, a block can reference its contents by pointing to a local file that is external to the document.
+
+The following block uses a `file://` reference to load its contents from a local file.
+
+```typescript "hello from an external file" file://src/features/hello.ts
+```
+
+## calling other scripts
+
+A runbook script written in `bash` can easily call other runbook scripts.
+
+```bash "calling other scripts"
+runbook run hello
+runbook run hello --greeting "Hey there" --name "Jim"
+```
