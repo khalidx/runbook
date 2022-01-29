@@ -2,7 +2,7 @@
 
 Executable markdown documents that you can run, template, and share!
 
-<img src="https://raw.githubusercontent.com/khalidx/runbook/main/logo.png" alt="Runbook - Executable markdown documents that you can run, template, and share!" width="350px">
+<img src="https://raw.githubusercontent.com/khalidx/runbook/main/img/logo.png" alt="Runbook - Executable markdown documents that you can run, template, and share!" width="250px">
 
 [![npm package version badge](https://img.shields.io/npm/v/@khalidx/runbook.svg?style=flat-square)](https://www.npmjs.com/package/@khalidx/runbook)
 [![GitHub last commit badge](https://img.shields.io/github/last-commit/khalidx/runbook.svg?style=flat-square)](https://github.com/khalidx/runbook/commits/main)
@@ -15,6 +15,8 @@ npm install -g @khalidx/runbook
 ```
 
 The [USAGE.md](./USAGE.md) file is a runnable markdown document. Check it for some usage examples.
+
+<img src="https://raw.githubusercontent.com/khalidx/runbook/main/img/screenshot.png" alt="Runbook - Command Line Interface Screenshot" width="450px">
 
 ## commands
 
