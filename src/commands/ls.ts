@@ -28,14 +28,25 @@ export async function ls (options = { log: true, rules: true }) {
             script: content,
             cwd: dirname(resolve(file.path)),
             template,
-            args
+            args,
+            signature: name + '/' + args.length + (args.length > 0 ? (':' + args.join('-')) : ''),
+            display: name + (args.length > 0 ? (' ' + args.map(arg => `--${arg}`).join(' ')) : '')
           }
         }))
       }
     })))
   if (markdownFiles.length === 0) throw new ApplicationError(`No markdown files found in ${process.cwd()}`)
   if (options.rules) ensureUniqueBlockSignatures(markdownFiles)
-  return markdownFiles
+  const commandList = markdownFiles.reduce<Array<string>>((commandList, file) => {
+    file.commands.forEach(command => {
+      commandList.push(command.display)
+    })
+    return commandList
+  }, [])
+  return {
+    markdownFiles,
+    commandList
+  }
 }
 
 function normalizedLang (block: { lang?: string }): string | undefined {

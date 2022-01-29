@@ -13,7 +13,8 @@ import { ls } from '../commands/ls'
 export async function run (args: string[]) {
   const argv = yargs(args).argv
   const suggestions = []
-  for (let file of await ls({ log: false, rules: true })) {
+  const { markdownFiles } = await ls({ log: false, rules: true })
+  for (let file of markdownFiles) {
     for (let command of file.commands) {
       // name check
       if (command.name !== argv._.join(' ')) continue

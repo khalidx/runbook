@@ -28,8 +28,8 @@ export async function serve () {
 }
 
 async function buildNavigation () {
-  const files = await ls({ log: false, rules: true })
-  return Promise.all(files.map(async file => {
+  const { markdownFiles } = await ls({ log: false, rules: true })
+  return Promise.all(markdownFiles.map(async file => {
     const rendered = await html.from(file.content)
     const name = basename(file.path)
     return {
@@ -41,13 +41,13 @@ async function buildNavigation () {
   }))
 }
 
-function buildIndexPage (pages: Array<{ name: string, url: string, file: { path: string, commands: Array<{ name: string, args: Array<string> }> } }>): string {
+function buildIndexPage (pages: Array<{ name: string, url: string, file: { path: string, commands: Array<{ display: string }> } }>): string {
   const documentList = pages.reduce((documentList, page) => {
     return documentList + `<li><a href="${page.url}">${page.name}</a></li>\n`
   }, '')
   const commandList = pages.reduce((commandList, page) => {
     return commandList + page.file.commands.reduce((commands, command) => {
-      return commands + `<li><a href="${page.url}">${page.name}</a> | ${command.name} ${command.args.map(arg => `--${arg}`).join(' ')}</li>`
+      return commands + `<li><a href="${page.url}">${page.name}</a> | ${command.display}</li>`
     }, '')
   }, '')
   return `
