@@ -72,6 +72,8 @@ runbook run hello
 - commands can be overloaded
 - command suggestions are returned if input doesn't match a command
 - commands are checked for uniqueness (name + arity + args)
+- commands written in `bash` can call other commands
+- commands can be referenced from external files, rather than embedded
 
 ## contributing
 
