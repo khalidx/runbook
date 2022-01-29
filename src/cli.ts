@@ -3,6 +3,7 @@
 import { help, ls, run, serve } from './index'
 import { setupCompletions } from './features/completions'
 import { ApplicationError } from './features/errors'
+import debug from './features/debug'
 
 async function cli (args: string[]) {
   const completions = await setupCompletions()
@@ -21,7 +22,7 @@ async function cli (args: string[]) {
 }
 
 cli(process.argv.slice(2)).catch(error => {
-  if (error instanceof ApplicationError) console.error(error.message)
+  if (error instanceof ApplicationError) console.error(debug ? error : error.message)
   else console.error(error)
   process.exit(1)
 })
