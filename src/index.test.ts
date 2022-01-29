@@ -13,7 +13,7 @@ describe('runbook', () => {
   it('can list commands', async () => {
     const files = await ls()
     const commands = files.flatMap(file => file.commands)
-    expect(commands.length).to.deep.equal(10)
+    expect(commands.length).to.deep.equal(11)
   })
 
 })

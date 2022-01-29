@@ -95,3 +95,10 @@ To quickly test while developing this package, run:
 ```bash "test"
 npx ts-node src/cli.ts run hello --greeting Hey --name Batman
 ```
+
+Alternatively, the package can be linked and run with the `--dev` flag to pick up the latest TypeScript source changes without the need to re-link the package.
+
+```bash "link"
+npm link
+runbook --dev run hello --greeting Hey --name Batman
+```
