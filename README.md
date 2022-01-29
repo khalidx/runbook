@@ -93,5 +93,5 @@ Open a GitHub issue to report a bug or request a feature!
 To quickly test while developing this package, run:
 
 ```bash "test"
-npx ts-node src/cli.ts run hello to --greeting Hey --name Batman
+npx ts-node src/cli.ts run hello --greeting Hey --name Batman
 ```
