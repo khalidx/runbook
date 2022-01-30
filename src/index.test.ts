@@ -1,8 +1,10 @@
 import { describe, it } from 'mocha'
 import { expect } from 'chai'
 
-import { ls } from './commands/ls'
+import padding from './features/padding'
 import tree from './features/tree'
+
+import { ls } from './commands/ls'
 
 describe('runbook', () => {
 
@@ -18,6 +20,33 @@ describe('runbook', () => {
       const commands = markdownFiles.flatMap(file => file.commands)
       expect(commands.length).to.deep.equal(15)
       expect(commands.length).to.deep.equal(commandList.length)
+    })
+
+  })
+
+  describe('feature | padding', () => {
+
+    it('can pad text if shorter', async () => {
+      const text = 'hello'
+      const expectedLength = 10
+      const padded = padding.for(text, expectedLength, '...', ' ')
+      expect(padded).to.deep.equal('hello     ')
+      expect(padded.length).to.deep.equal(expectedLength)
+    })
+
+    it('can prefix text if longer', async () => {
+      const text = '/some/really/long/path'
+      const expectedLength = 10
+      const padded = padding.for(text, expectedLength, '...', ' ')
+      expect(padded).to.deep.equal('...ng/path')
+      expect(padded.length).to.deep.equal(expectedLength)
+    })
+
+    it('returns original text if already at expected length', async () => {
+      const text = 'goodbye'
+      const expectedLength = text.length
+      const padded = padding.for(text, expectedLength, '...', ' ')
+      expect(padded).to.deep.equal(text)
     })
 
   })

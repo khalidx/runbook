@@ -5,6 +5,7 @@ import files from '../features/files'
 import markdown from '../features/markdown'
 import handlebars from '../features/handlebars'
 import colors from '../features/colors'
+import padding from '../features/padding'
 import log from '../features/log'
 import { ApplicationError } from '../features/errors'
 
@@ -21,7 +22,7 @@ export async function ls (options = { log: true, rules: true }) {
           const name = getBlockName({ file, block })
           const content = await getBlockContent({ file, block })
           const { args, template } = getBlockArgs({ block, content })
-          if (options.log) log.info(file.path, '|', colors.green(name), args.map(arg => `--${arg}`).join(' '))
+          if (options.log) log.info(`${padding.for(file.path, 10, '...', ' ')} | ${colors.green(name)} ${args.map(arg => `--${arg}`).join(' ')}`)
           return {
             name,
             lang: normalizedLang(block),
