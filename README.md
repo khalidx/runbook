@@ -16,7 +16,7 @@ npm install -g @khalidx/runbook
 
 The [USAGE.md](./USAGE.md) file is a runnable markdown document. Check it for some usage examples.
 
-<img src="https://raw.githubusercontent.com/khalidx/runbook/main/img/screenshot.png" alt="Runbook - Command Line Interface Screenshot" width="450px">
+<img src="https://raw.githubusercontent.com/khalidx/runbook/main/img/screenshot.png" alt="Runbook - Command Line Interface Screenshot" width="800px">
 
 ## commands
 
