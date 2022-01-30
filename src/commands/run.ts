@@ -6,6 +6,7 @@ import shell from 'shelljs'
 import files from '../features/files'
 import id from '../features/id'
 import colors from '../features/colors'
+import log from '../features/log'
 import { ApplicationError } from '../features/errors'
 
 import { ls } from '../commands/ls'
@@ -13,7 +14,8 @@ import { ls } from '../commands/ls'
 export async function run (args: string[]) {
   const argv = yargs(args).argv
   const suggestions = []
-  for (let file of await ls({ log: false, rules: true })) {
+  const { markdownFiles } = await ls({ log: false, rules: true })
+  for (let file of markdownFiles) {
     for (let command of file.commands) {
       // name check
       if (command.name !== argv._.join(' ')) continue
@@ -35,8 +37,8 @@ export async function run (args: string[]) {
       } else if (command.lang === 'go') {
         if (!shell.which('go')) throw new ApplicationError(`[${file.path}:${command.position?.start.line}] Could not find "go" on this system`)
       } else throw new ApplicationError(`[${file.path}:${command.position?.start.line}] Unsupported block language: ${command.lang}`)
-      console.info(`[${file.path}:${command.position?.start.line}] Running ${colors.green(command.name)}`)
-      const executableFileName = id() + (command.lang === 'go' ? '.go' : '')
+      log.interactive(`[${file.path}:${command.position?.start.line}] Running ${colors.green(command.name)}`)
+      const executableFileName = 'runbook-' + id() + (command.lang === 'go' ? '.go' : '')
       await files.write(executableFileName, command.template?.(options) || command.script)
       await files.chmod(executableFileName, 0o755)
       try {
@@ -46,6 +48,15 @@ export async function run (args: string[]) {
         else if (command.lang === 'python') execFileSync('python', [ executableFileName ], { stdio: 'inherit' })
         else if (command.lang === 'go') execFileSync('go', [ 'run', executableFileName ], { stdio: 'inherit' })
         else throw new ApplicationError(`[${file.path}:${command.position?.start.line}] Unsupported block language (not executable): ${command.lang}`)
+      } catch (error) {
+        if (error instanceof Error && error.message.startsWith('Command failed') && error.message.includes(executableFileName)) {
+          const { status, pid } = error as { status?: number, pid?: number }
+          if (status !== undefined && pid !== undefined) {
+            log.errorDebug(error)
+            throw new ApplicationError(`[${file.path}:${command.position?.start.line}] Command with pid [${pid}] failed with exit status [${status}]`)
+          }
+        }
+        throw error
       } finally {
         await files.delete(executableFileName)
       }
