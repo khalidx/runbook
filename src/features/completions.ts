@@ -1,6 +1,7 @@
 import omelette from 'omelette'
 
 import tree from '../features/tree'
+import log from '../features/log'
 
 import { ls } from '../commands/ls'
 
@@ -20,13 +21,13 @@ export async function setupCompletions () {
   return {
     set: () => {
       process.on('exit', (code) => {
-        if (code === 0) console.info('Done. Spawn a new shell to start using autocomplete.')
+        if (code === 0) log.info('Done. Spawn a new shell to start using autocomplete.')
       })
       completion.setupShellInitFile()
     },
     remove: () => {
       process.on('exit', (code) => {
-        if (code === 0) console.info('Done. Spawn a new shell to continue without autocomplete.')
+        if (code === 0) log.info('Done. Spawn a new shell to continue without autocomplete.')
       })
       completion.cleanupShellInitFile()
     }

@@ -1,5 +1,6 @@
 import colors from '../features/colors'
 import terminal from '../features/terminal'
+import log from '../features/log'
 
 export function help (options = { log: true }): string {
   const message = colors.blue(terminal.ascii.art.logo) + '\n' +
@@ -9,6 +10,6 @@ export function help (options = { log: true }): string {
     colors.blue('🔍 completions set') + '    | ' + colors.yellow('Configures shell autocompletion.') + '\n' +
     colors.blue('🔍 completions remove') + ' | ' + colors.yellow('Removes shell autocompletion.') + '\n' +
     colors.blue('💁 help') + '               | ' + colors.yellow('Shows this help menu.') + '\n'
-  if (options.log) console.info(message)
+  if (options.log) log.info(message)
   return message
 }

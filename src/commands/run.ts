@@ -6,8 +6,7 @@ import shell from 'shelljs'
 import files from '../features/files'
 import id from '../features/id'
 import colors from '../features/colors'
-import terminal from '../features/terminal'
-import debug from '../features/debug'
+import log from '../features/log'
 import { ApplicationError } from '../features/errors'
 
 import { ls } from '../commands/ls'
@@ -38,7 +37,7 @@ export async function run (args: string[]) {
       } else if (command.lang === 'go') {
         if (!shell.which('go')) throw new ApplicationError(`[${file.path}:${command.position?.start.line}] Could not find "go" on this system`)
       } else throw new ApplicationError(`[${file.path}:${command.position?.start.line}] Unsupported block language: ${command.lang}`)
-      if (terminal.is.interactive) console.info(`[${file.path}:${command.position?.start.line}] Running ${colors.green(command.name)}`)
+      log.interactive(`[${file.path}:${command.position?.start.line}] Running ${colors.green(command.name)}`)
       const executableFileName = 'runbook-' + id() + (command.lang === 'go' ? '.go' : '')
       await files.write(executableFileName, command.template?.(options) || command.script)
       await files.chmod(executableFileName, 0o755)
@@ -53,7 +52,7 @@ export async function run (args: string[]) {
         if (error instanceof Error && error.message.startsWith('Command failed') && error.message.includes(executableFileName)) {
           const { status, pid } = error as { status?: number, pid?: number }
           if (status !== undefined && pid !== undefined) {
-            if (debug) console.error(error)
+            log.errorDebug(error)
             throw new ApplicationError(`[${file.path}:${command.position?.start.line}] Command with pid [${pid}] failed with exit status [${status}]`)
           }
         }

@@ -85,6 +85,7 @@ Shows what you can do with the `runbook` CLI.
 - commands written in `bash` can call other commands
 - commands can be referenced from external files, rather than embedded
 - serve all discovered documentation and commands with `runbook serve`
+- debug logs are written to `~/.runbook/logs/`
 
 ## contributing
 

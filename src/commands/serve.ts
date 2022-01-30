@@ -4,6 +4,7 @@ import KoaRouter from '@koa/router'
 
 import colors from '../features/colors'
 import html from '../features/html'
+import log from '../features/log'
 
 import { ls } from '../commands/ls'
 
@@ -23,7 +24,7 @@ export async function serve () {
   const app = new Koa()
   app.use(router.routes()).use(router.allowedMethods())
   app.listen(port, () => {
-    console.info(`${colors.blue('runbook')} is listening on port ${port} ...`)
+    log.info(`${colors.blue('runbook')} is listening on port ${port} ...`)
   })
 }
 
