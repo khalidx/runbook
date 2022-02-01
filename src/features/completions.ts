@@ -6,10 +6,10 @@ import log from '../features/log'
 import { ls } from '../commands/ls'
 
 export async function setupCompletions () {
-  const { commandList } = await ls({ log: false, rules: true })
+  const { commands } = await ls({ log: false, rules: true })
   const completion = omelette('runbook|r').tree({
     'ls': {},
-    'run': tree(commandList, ' '),
+    'run': tree(commands.map(command => command.display), ' '),
     'serve': {},
     'completions': {
       'set': {},

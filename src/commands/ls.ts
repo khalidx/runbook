@@ -39,15 +39,15 @@ export async function ls (options = { log: true, rules: true }) {
     })))
   if (markdownFiles.length === 0) throw new ApplicationError(`No markdown files found in ${process.cwd()}`)
   if (options.rules) ensureUniqueBlockSignatures(markdownFiles)
-  const commandList = markdownFiles.reduce<Array<string>>((commandList, file) => {
+  const commands = markdownFiles.reduce<typeof markdownFiles[0]['commands']>((commands, file) => {
     file.commands.forEach(command => {
-      commandList.push(command.display)
+      commands.push(command)
     })
-    return commandList
+    return commands
   }, [])
   return {
     markdownFiles,
-    commandList
+    commands
   }
 }
 
