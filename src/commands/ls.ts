@@ -5,7 +5,9 @@ import files from '../features/files'
 import markdown from '../features/markdown'
 import handlebars from '../features/handlebars'
 import colors from '../features/colors'
+import fonts from '../features/fonts'
 import padding from '../features/padding'
+import plural from '../features/plural'
 import log from '../features/log'
 import { ApplicationError } from '../features/errors'
 
@@ -45,6 +47,7 @@ export async function ls (options = { log: true, rules: true }) {
     })
     return commands
   }, [])
+  if (options.log) log.interactive(fonts.italic(`Discovered ${colors.green(markdownFiles.length)} ${plural.s('file', markdownFiles.length)} and ${colors.green(commands.length)} ${plural.s('command', commands.length)}.`))
   return {
     markdownFiles,
     commands

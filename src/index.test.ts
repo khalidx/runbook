@@ -2,6 +2,7 @@ import { describe, it } from 'mocha'
 import { expect } from 'chai'
 
 import padding from './features/padding'
+import plural from './features/plural'
 import tree from './features/tree'
 
 import { ls } from './commands/ls'
@@ -78,6 +79,22 @@ describe('runbook', () => {
         expect(padded).to.deep.equal(text)
       })
 
+    })
+
+  })
+
+  describe('feature | plural', () => {
+
+    it('shows the correct singular text', async () => {
+      expect(plural.form('person', 'people', 1)).to.deep.equal('person')
+      expect(plural.s('team', 1)).to.deep.equal('team')
+    })
+
+    it('shows the correct plural text', () => {
+      expect(plural.form('person', 'people', 0)).to.deep.equal('people')
+      expect(plural.form('person', 'people', 2)).to.deep.equal('people')
+      expect(plural.s('team', 0)).to.deep.equal('teams')
+      expect(plural.s('team', 2)).to.deep.equal('teams')
     })
 
   })
