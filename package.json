@@ -34,6 +34,8 @@
     "fs-extra": "^9.0.1",
     "globby": "^11.0.1",
     "handlebars": "^4.7.7",
+    "inquirer": "^8.2.0",
+    "inquirer-search-list": "^1.2.6",
     "koa": "^2.13.4",
     "omelette": "^0.4.17",
     "rehype-sanitize": "^4.0.0",
@@ -54,6 +56,7 @@
   "devDependencies": {
     "@types/chai": "^4.2.14",
     "@types/fs-extra": "^9.0.4",
+    "@types/inquirer": "^8.2.0",
     "@types/koa": "^2.13.4",
     "@types/koa__router": "^8.0.11",
     "@types/mocha": "^8.2.0",
