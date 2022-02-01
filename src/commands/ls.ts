@@ -22,7 +22,7 @@ export async function ls (options = { log: true, rules: true }) {
           const name = getBlockName({ file, block })
           const content = await getBlockContent({ file, block })
           const { args, template } = getBlockArgs({ block, content })
-          if (options.log) log.info(`${padding.for(file.path, 10, '...', ' ')} | ${colors.green(name)} ${args.map(arg => `--${arg}`).join(' ')}`)
+          if (options.log) log.info(`${padding.middle(file.path, 12, '...', ' ')} | ${colors.green(name)} ${args.map(arg => `--${arg}`).join(' ')}`)
           return {
             name,
             lang: normalizedLang(block),

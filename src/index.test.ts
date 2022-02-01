@@ -26,27 +26,58 @@ describe('runbook', () => {
 
   describe('feature | padding', () => {
 
-    it('can pad text if shorter', async () => {
-      const text = 'hello'
-      const expectedLength = 10
-      const padded = padding.for(text, expectedLength, '...', ' ')
-      expect(padded).to.deep.equal('hello     ')
-      expect(padded.length).to.deep.equal(expectedLength)
+    describe('prefix', () => {
+
+      it('can pad text if shorter', async () => {
+        const text = 'hello'
+        const expectedLength = 10
+        const padded = padding.prefix(text, expectedLength, '...', ' ')
+        expect(padded).to.deep.equal('hello     ')
+        expect(padded.length).to.deep.equal(expectedLength)
+      })
+
+      it('can prefix text if longer', async () => {
+        const text = '/some/really/long/path'
+        const expectedLength = 10
+        const padded = padding.prefix(text, expectedLength, '...', ' ')
+        expect(padded).to.deep.equal('...ng/path')
+        expect(padded.length).to.deep.equal(expectedLength)
+      })
+
+      it('returns original text if already at expected length', async () => {
+        const text = 'goodbye'
+        const expectedLength = text.length
+        const padded = padding.prefix(text, expectedLength, '...', ' ')
+        expect(padded).to.deep.equal(text)
+      })
+
     })
 
-    it('can prefix text if longer', async () => {
-      const text = '/some/really/long/path'
-      const expectedLength = 10
-      const padded = padding.for(text, expectedLength, '...', ' ')
-      expect(padded).to.deep.equal('...ng/path')
-      expect(padded.length).to.deep.equal(expectedLength)
-    })
+    describe('middle', () => {
 
-    it('returns original text if already at expected length', async () => {
-      const text = 'goodbye'
-      const expectedLength = text.length
-      const padded = padding.for(text, expectedLength, '...', ' ')
-      expect(padded).to.deep.equal(text)
+      it('can pad text if shorter', async () => {
+        const text = 'hello'
+        const expectedLength = 10
+        const padded = padding.middle(text, expectedLength, '...', ' ')
+        expect(padded).to.deep.equal('hello     ')
+        expect(padded.length).to.deep.equal(expectedLength)
+      })
+
+      it('can replace middle text if longer', async () => {
+        const text = '/some/really/long/path'
+        const expectedLength = 10
+        const padded = padding.middle(text, expectedLength, '...', ' ')
+        expect(padded).to.deep.equal('/so...path')
+        expect(padded.length).to.deep.equal(expectedLength)
+      })
+
+      it('returns original text if already at expected length', async () => {
+        const text = 'goodbye'
+        const expectedLength = text.length
+        const padded = padding.middle(text, expectedLength, '...', ' ')
+        expect(padded).to.deep.equal(text)
+      })
+
     })
 
   })
