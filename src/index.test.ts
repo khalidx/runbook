@@ -12,7 +12,7 @@ describe('runbook', () => {
 
     it('can list files', async () => {
       const { markdownFiles } = await ls({ log: false, rules: true })
-      expect(markdownFiles.length).to.deep.equal(2)
+      expect(markdownFiles.length).to.deep.equal(4)
     })
   
     it('can list commands', async () => {
