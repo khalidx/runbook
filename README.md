@@ -16,7 +16,7 @@ npm install -g @khalidx/runbook
 
 The [USAGE.md](./USAGE.md) file is a runnable markdown document. Check it for some usage examples.
 
-<img src="https://raw.githubusercontent.com/khalidx/runbook/main/img/screenshot.png" alt="Runbook - Command Line Interface Screenshot" width="450px">
+<img src="https://raw.githubusercontent.com/khalidx/runbook/main/img/screenshot.png" alt="Runbook - Command Line Interface Screenshot" width="800px">
 
 ## commands
 
@@ -91,41 +91,4 @@ Shows what you can do with the `runbook` CLI.
 
 Open a GitHub issue to report a bug or request a feature!
 
-*For Developers*
-
-To run without building first, use:
-
-```bash "runbook ls"
-npx ts-node src/cli.ts ls  # or any other runbook command
-```
-
-To quickly test while developing this package, run:
-
-```bash "runbook run hello"
-npx ts-node src/cli.ts run hello --greeting Hey --name Batman
-```
-
-Alternatively, the package can be linked and run with the `DEV=true` environment variable to pick up the latest TypeScript source changes without the need to re-link the package.
-
-```bash "link"
-npm link
-DEV=true runbook run hello --greeting Hey --name Batman
-```
-
-Here's some fun - using runbook to run runbook to run the raw TypeScript version of runbook to run the "hello" command.
-
-```bash "runbook inception"
-runbook run runbook run hello
-```
-
-To run all test cases:
-
-```bash "test"
-npm run test
-```
-
-Here is a command that always fails (useful for seeing how runbook handles errors):
-
-```bash "this will fail"
-exit 1
-```
+For developing the runbook application itself, [check this out](DEVELOPERS.md).

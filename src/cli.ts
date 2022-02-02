@@ -9,6 +9,7 @@ async function cli (args: string[]) {
   const completions = await setupCompletions()
   const command = args.shift()
   if (command === 'ls') return ls()
+  if (command === 'run' && args.length === 0) return import('./ui/run').then(ui => ui.render())
   if (command === 'run' && args.length > 0) return run(args)
   if (command === 'serve') return serve()
   if (command === 'completions') {

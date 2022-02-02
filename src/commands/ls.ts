@@ -5,7 +5,9 @@ import files from '../features/files'
 import markdown from '../features/markdown'
 import handlebars from '../features/handlebars'
 import colors from '../features/colors'
+import fonts from '../features/fonts'
 import padding from '../features/padding'
+import plural from '../features/plural'
 import log from '../features/log'
 import { ApplicationError } from '../features/errors'
 
@@ -22,7 +24,7 @@ export async function ls (options = { log: true, rules: true }) {
           const name = getBlockName({ file, block })
           const content = await getBlockContent({ file, block })
           const { args, template } = getBlockArgs({ block, content })
-          if (options.log) log.info(`${padding.for(file.path, 10, '...', ' ')} | ${colors.green(name)} ${args.map(arg => `--${arg}`).join(' ')}`)
+          if (options.log) log.info(`${padding.middle(file.path, 12, '...', ' ')} | ${colors.green(name)} ${args.map(arg => `--${arg}`).join(' ')}`)
           return {
             name,
             lang: normalizedLang(block),
@@ -39,27 +41,29 @@ export async function ls (options = { log: true, rules: true }) {
     })))
   if (markdownFiles.length === 0) throw new ApplicationError(`No markdown files found in ${process.cwd()}`)
   if (options.rules) ensureUniqueBlockSignatures(markdownFiles)
-  const commandList = markdownFiles.reduce<Array<string>>((commandList, file) => {
+  const commands = markdownFiles.reduce<typeof markdownFiles[0]['commands']>((commands, file) => {
     file.commands.forEach(command => {
-      commandList.push(command.display)
+      commands.push(command)
     })
-    return commandList
+    return commands
   }, [])
+  if (options.log) log.interactive(fonts.italic(`Discovered ${colors.green(markdownFiles.length)} ${plural.s('file', markdownFiles.length)} and ${colors.green(commands.length)} ${plural.s('command', commands.length)}.`))
   return {
     markdownFiles,
-    commandList
+    commands
   }
 }
 
 function normalizedLang (block: { lang?: string }): string | undefined {
   if (block.lang === 'js') return 'javascript'
   if (block.lang === 'ts') return 'typescript'
+  if (block.lang === 'es6') return 'esm'
   return block.lang
 }
 
 function isSupportedBlock (params: { block: { lang?: string }}): boolean {
   const lang = normalizedLang(params.block)
-  return (lang === 'bash' || lang === 'hbs' || lang === 'javascript' || lang === 'typescript' || lang === 'python' || lang === 'go')
+  return (lang === 'bash' || lang === 'hbs' || lang === 'javascript' || lang === 'typescript' || lang ==='esm' || lang === 'python' || lang === 'go')
 }
 
 function getBlockName (params: { file: { path: string }, block: { meta?: string, position?: Position } }): string {

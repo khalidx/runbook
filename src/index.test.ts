@@ -2,6 +2,7 @@ import { describe, it } from 'mocha'
 import { expect } from 'chai'
 
 import padding from './features/padding'
+import plural from './features/plural'
 import tree from './features/tree'
 
 import { ls } from './commands/ls'
@@ -12,41 +13,88 @@ describe('runbook', () => {
 
     it('can list files', async () => {
       const { markdownFiles } = await ls({ log: false, rules: true })
-      expect(markdownFiles.length).to.deep.equal(2)
+      expect(markdownFiles.length).to.deep.equal(4)
     })
   
     it('can list commands', async () => {
-      const { markdownFiles, commandList } = await ls({ log: false, rules: true })
-      const commands = markdownFiles.flatMap(file => file.commands)
-      expect(commands.length).to.deep.equal(15)
-      expect(commands.length).to.deep.equal(commandList.length)
+      const { markdownFiles, commands } = await ls({ log: false, rules: true })
+      const commandsFound = markdownFiles.flatMap(file => file.commands)
+      expect(commandsFound.length).to.deep.equal(20)
+      expect(commandsFound.length).to.deep.equal(commands.length)
     })
 
   })
 
   describe('feature | padding', () => {
 
-    it('can pad text if shorter', async () => {
-      const text = 'hello'
-      const expectedLength = 10
-      const padded = padding.for(text, expectedLength, '...', ' ')
-      expect(padded).to.deep.equal('hello     ')
-      expect(padded.length).to.deep.equal(expectedLength)
+    describe('prefix', () => {
+
+      it('can pad text if shorter', async () => {
+        const text = 'hello'
+        const expectedLength = 10
+        const padded = padding.prefix(text, expectedLength, '...', ' ')
+        expect(padded).to.deep.equal('hello     ')
+        expect(padded.length).to.deep.equal(expectedLength)
+      })
+
+      it('can prefix text if longer', async () => {
+        const text = '/some/really/long/path'
+        const expectedLength = 10
+        const padded = padding.prefix(text, expectedLength, '...', ' ')
+        expect(padded).to.deep.equal('...ng/path')
+        expect(padded.length).to.deep.equal(expectedLength)
+      })
+
+      it('returns original text if already at expected length', async () => {
+        const text = 'goodbye'
+        const expectedLength = text.length
+        const padded = padding.prefix(text, expectedLength, '...', ' ')
+        expect(padded).to.deep.equal(text)
+      })
+
     })
 
-    it('can prefix text if longer', async () => {
-      const text = '/some/really/long/path'
-      const expectedLength = 10
-      const padded = padding.for(text, expectedLength, '...', ' ')
-      expect(padded).to.deep.equal('...ng/path')
-      expect(padded.length).to.deep.equal(expectedLength)
+    describe('middle', () => {
+
+      it('can pad text if shorter', async () => {
+        const text = 'hello'
+        const expectedLength = 10
+        const padded = padding.middle(text, expectedLength, '...', ' ')
+        expect(padded).to.deep.equal('hello     ')
+        expect(padded.length).to.deep.equal(expectedLength)
+      })
+
+      it('can replace middle text if longer', async () => {
+        const text = '/some/really/long/path'
+        const expectedLength = 10
+        const padded = padding.middle(text, expectedLength, '...', ' ')
+        expect(padded).to.deep.equal('/so...path')
+        expect(padded.length).to.deep.equal(expectedLength)
+      })
+
+      it('returns original text if already at expected length', async () => {
+        const text = 'goodbye'
+        const expectedLength = text.length
+        const padded = padding.middle(text, expectedLength, '...', ' ')
+        expect(padded).to.deep.equal(text)
+      })
+
     })
 
-    it('returns original text if already at expected length', async () => {
-      const text = 'goodbye'
-      const expectedLength = text.length
-      const padded = padding.for(text, expectedLength, '...', ' ')
-      expect(padded).to.deep.equal(text)
+  })
+
+  describe('feature | plural', () => {
+
+    it('shows the correct singular text', async () => {
+      expect(plural.form('person', 'people', 1)).to.deep.equal('person')
+      expect(plural.s('team', 1)).to.deep.equal('team')
+    })
+
+    it('shows the correct plural text', () => {
+      expect(plural.form('person', 'people', 0)).to.deep.equal('people')
+      expect(plural.form('person', 'people', 2)).to.deep.equal('people')
+      expect(plural.s('team', 0)).to.deep.equal('teams')
+      expect(plural.s('team', 2)).to.deep.equal('teams')
     })
 
   })
