@@ -47,3 +47,25 @@ const generatePassword = (
 
 console.log(generatePassword())
 ```
+
+## fun
+
+**Runbook logo party**
+
+```bash "runbook logo party"
+runbook run print runbook logo --times 3
+```
+
+Prints the runbook logo X times to the terminal.
+
+```es6 hbs "print runbook logo"
+import terminal from './src/features/terminal'
+
+function print (times: number) {
+  for (let i = 0; i < times; i++) {
+    console.log(terminal.ascii.art.logo)
+  }
+}
+
+print({{ times }})
+```

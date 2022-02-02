@@ -57,12 +57,13 @@ export async function ls (options = { log: true, rules: true }) {
 function normalizedLang (block: { lang?: string }): string | undefined {
   if (block.lang === 'js') return 'javascript'
   if (block.lang === 'ts') return 'typescript'
+  if (block.lang === 'es6') return 'esm'
   return block.lang
 }
 
 function isSupportedBlock (params: { block: { lang?: string }}): boolean {
   const lang = normalizedLang(params.block)
-  return (lang === 'bash' || lang === 'hbs' || lang === 'javascript' || lang === 'typescript' || lang === 'python' || lang === 'go')
+  return (lang === 'bash' || lang === 'hbs' || lang === 'javascript' || lang === 'typescript' || lang ==='esm' || lang === 'python' || lang === 'go')
 }
 
 function getBlockName (params: { file: { path: string }, block: { meta?: string, position?: Position } }): string {

@@ -32,19 +32,23 @@ export async function run (args: string[]) {
       } else if (command.lang === 'typescript') {
         if (!shell.which('node')) throw new ApplicationError(`[${file.path}:${command.position?.start.line}] Could not find "node" on this system`)
         if (!shell.which('npx')) throw new ApplicationError(`[${file.path}:${command.position?.start.line}] Could not find "npx" on this system`)
+      } else if (command.lang === 'esm') {
+        if (!shell.which('node')) throw new ApplicationError(`[${file.path}:${command.position?.start.line}] Could not find "node" on this system`)
+        if (!shell.which('ts-node') && !shell.test('-d', './node_modules/ts-node/')) throw new ApplicationError(`[${file.path}:${command.position?.start.line}] Could not find "ts-node" on this system`)
       } else if (command.lang === 'python') {
         if (!shell.which('python')) throw new ApplicationError(`[${file.path}:${command.position?.start.line}] Could not find "python" on this system`)
       } else if (command.lang === 'go') {
         if (!shell.which('go')) throw new ApplicationError(`[${file.path}:${command.position?.start.line}] Could not find "go" on this system`)
       } else throw new ApplicationError(`[${file.path}:${command.position?.start.line}] Unsupported block language: ${command.lang}`)
       log.interactive(`[${file.path}:${command.position?.start.line}] Running ${colors.green(command.name)}`)
-      const executableFileName = 'runbook-' + id() + (command.lang === 'go' ? '.go' : '')
+      const executableFileName = 'runbook-' + id() + (command.lang === 'go' ? '.go' : '') + (command.lang === 'esm' ? '.ts' : '')
       await files.write(executableFileName, command.template?.(options) || command.script)
       await files.chmod(executableFileName, 0o755)
       try {
         if (command.lang === 'bash' || command.lang === 'hbs') execFileSync(resolve(executableFileName), { stdio: 'inherit' })
         else if (command.lang === 'javascript') execFileSync('node', [ executableFileName ], { stdio: 'inherit' })
         else if (command.lang === 'typescript') execFileSync('npx', [ 'ts-node', executableFileName ], { stdio: 'inherit' })
+        else if (command.lang === 'esm') execFileSync('node', [ '--loader', 'ts-node/esm', executableFileName ], { stdio: 'inherit' })
         else if (command.lang === 'python') execFileSync('python', [ executableFileName ], { stdio: 'inherit' })
         else if (command.lang === 'go') execFileSync('go', [ 'run', executableFileName ], { stdio: 'inherit' })
         else throw new ApplicationError(`[${file.path}:${command.position?.start.line}] Unsupported block language (not executable): ${command.lang}`)
