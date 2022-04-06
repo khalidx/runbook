@@ -27,6 +27,8 @@ export async function run (args: string[]) {
       }
       if (command.lang === 'bash' || command.lang === 'hbs') {
         if (!shell.which('bash')) throw new ApplicationError(`[${file.path}:${command.position?.start.line}] Could not find "bash" on this system`)
+      } else if (command.lang === 'powershell') {
+        if (!shell.which('powershell.exe') && !shell.which('pwsh')) throw new ApplicationError(`[${file.path}:${command.position?.start.line}] Could not find "powershell.exe" on this system`)
       } else if (command.lang === 'javascript') {
         if (!shell.which('node')) throw new ApplicationError(`[${file.path}:${command.position?.start.line}] Could not find "node" on this system`)
       } else if (command.lang === 'typescript') {
@@ -41,11 +43,15 @@ export async function run (args: string[]) {
         if (!shell.which('go')) throw new ApplicationError(`[${file.path}:${command.position?.start.line}] Could not find "go" on this system`)
       } else throw new ApplicationError(`[${file.path}:${command.position?.start.line}] Unsupported block language: ${command.lang}`)
       log.interactive(`[${file.path}:${command.position?.start.line}] Running ${colors.green(command.name)}`)
-      const executableFileName = 'runbook-' + id() + (command.lang === 'go' ? '.go' : '') + (command.lang === 'esm' ? '.ts' : '')
+      const executableFileName = 'runbook-' + id() +
+        (command.lang === 'powershell' ? '.ps1' : '') +
+        (command.lang === 'esm' ? '.ts' : '') +
+        (command.lang === 'go' ? '.go' : '')
       await files.write(executableFileName, command.template?.(options) || command.script)
       await files.chmod(executableFileName, 0o755)
       try {
         if (command.lang === 'bash' || command.lang === 'hbs') execFileSync(resolve(executableFileName), { stdio: 'inherit' })
+        else if (command.lang === 'powershell') execFileSync(shell.which('pwsh') ? 'pwsh' : 'powershell.exe', [ '-File', executableFileName ], { stdio: 'inherit' })
         else if (command.lang === 'javascript') execFileSync('node', [ executableFileName ], { stdio: 'inherit' })
         else if (command.lang === 'typescript') execFileSync('npx', [ 'ts-node', executableFileName ], { stdio: 'inherit' })
         else if (command.lang === 'esm') execFileSync('node', [ '--loader', 'ts-node/esm', executableFileName ], { stdio: 'inherit' })
