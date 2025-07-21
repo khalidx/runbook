@@ -54,7 +54,7 @@ export async function ls (options = { log: true, rules: true }) {
   }
 }
 
-function normalizedLang (block: { lang?: string }): string | undefined {
+function normalizedLang (block: { lang?: string | null }): string | null | undefined {
   if (block.lang === 'ps1') return 'powershell'
   if (block.lang === 'js') return 'javascript'
   if (block.lang === 'ts') return 'typescript'
@@ -62,19 +62,19 @@ function normalizedLang (block: { lang?: string }): string | undefined {
   return block.lang
 }
 
-function isSupportedBlock (params: { block: { lang?: string }}): boolean {
+function isSupportedBlock (params: { block: { lang?: string | null }}): boolean {
   const lang = normalizedLang(params.block)
   return (lang === 'bash' || lang === 'hbs' || lang === 'powershell' || lang === 'javascript' || lang === 'typescript' || lang === 'esm' || lang === 'python' || lang === 'go')
 }
 
-function getBlockName (params: { file: { path: string }, block: { meta?: string, position?: Position } }): string {
+function getBlockName (params: { file: { path: string }, block: { meta?: string | null, position?: Position } }): string {
   const names = params.block.meta?.match(/"([^"]*)"/g)
   if (names?.length !== 1) throw new ApplicationError(`[${params.file.path}:${params.block.position?.start.line}] A code block must have exactly one name`)
   const name = names[0].substring(1, names[0].length - 1)
   return name
 }
 
-async function getBlockContent (params: { file: { path: string }, block: { meta?: string, position?: Position, value: string }}): Promise<string> {
+async function getBlockContent (params: { file: { path: string }, block: { meta?: string | null, position?: Position, value: string }}): Promise<string> {
   const paths = params.block.meta?.match(/(file):\/\/(.+)/g)
   if (!paths || paths.length === 0) return params.block.value
   if (paths.length !== 1) throw new ApplicationError(`[${params.file.path}:${params.block.position?.start.line}] A code block can specify only one file path`)
@@ -83,7 +83,7 @@ async function getBlockContent (params: { file: { path: string }, block: { meta?
   return await files.read(path, 'utf-8')
 }
 
-function getBlockArgs (params: { block: { meta?: string, lang?: string }, content: string }): { args: string[], template?: ReturnType<typeof handlebars.template> } {
+function getBlockArgs (params: { block: { meta?: string | null, lang?: string | null }, content: string }): { args: string[], template?: ReturnType<typeof handlebars.template> } {
   if (params.block.lang === 'hbs' || params.block.meta?.startsWith('hbs')) {
     const args = handlebars.args(params.content)
     const template = handlebars.template(params.content)
