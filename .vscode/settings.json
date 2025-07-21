@@ -1,0 +1,10 @@
+{
+  "editor.insertSpaces": true,
+  "editor.tabSize": 2,
+  "files.insertFinalNewline": true,
+  "git.inputValidation": true,
+  "git.inputValidationLength": 72,
+  "git.inputValidationSubjectLength": 50,
+  "scm.defaultViewMode": "tree",
+  "terminal.integrated.scrollback": 100000
+}
