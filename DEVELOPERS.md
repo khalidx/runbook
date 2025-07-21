@@ -2,6 +2,12 @@
 
 This document is for developers working on the runbook application *itself*. If you're interested in using runbook, see the [README](README.md).
 
+> [!TIP]
+>
+> You can get started right away with a GitHub Codespace instead of cloning the repository locally!
+>
+> [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/khalidx/runbook?quickstart=1)
+
 To run without building first, use:
 
 ```bash "runbook ls"
