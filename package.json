@@ -12,6 +12,10 @@
   "publishConfig": {
     "access": "public"
   },
+  "engines": {
+    "node": "^22.17.1",
+    "npm": "^10.9.2"
+  },
   "scripts": {
     "prepare": "run-s build:node",
     "build": "run-s build:node build:native",
