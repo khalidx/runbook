@@ -1,4 +1,4 @@
-export { help } from './commands/help'
-export { ls } from './commands/ls'
-export { run } from './commands/run'
-export { serve } from './commands/serve'
+export { help } from './commands/help.js'
+export { ls } from './commands/ls.js'
+export { run } from './commands/run.js'
+export { serve } from './commands/serve.js'

@@ -1,6 +1,7 @@
 {
   "editor.insertSpaces": true,
   "editor.tabSize": 2,
+  "files.autoSave": "off",
   "files.insertFinalNewline": true,
   "git.inputValidation": true,
   "git.inputValidationLength": 72,

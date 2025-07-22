@@ -5,7 +5,7 @@ export const handlebars = {
   template: (text: string) => Handlebars.compile(text),
   /** Get the names of the arguments in the template string */
   args (text: string) {
-    const names: Array<string> = []
+    const names = new Set<string>()
     function MyCompiler() {
       // @ts-expect-error
       Handlebars.JavaScriptCompiler.apply(this, arguments)
@@ -15,7 +15,7 @@ export const handlebars = {
     MyCompiler.prototype.compiler = MyCompiler
     // @ts-expect-error
     MyCompiler.prototype.nameLookup = function(parent, name, type) {
-      if (type === 'context') names.push(name)
+      if (type === 'context') names.add(name)
       // @ts-expect-error
       return Handlebars.JavaScriptCompiler.prototype.nameLookup.call(this, parent, name, type)
     }
@@ -24,7 +24,7 @@ export const handlebars = {
     env.JavaScriptCompiler = MyCompiler
     const template = env.compile(text)
     template({}) // providing no values to template. running just to run the compiler to extract names.
-    return names
+    return Array.from(names)
   }
 }
 

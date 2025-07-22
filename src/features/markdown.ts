@@ -1,7 +1,7 @@
-import remark from 'remark'
-import visit from 'unist-util-visit'
-import { Node } from 'unist'
-import { Code } from 'mdast'
+import { remark } from 'remark'
+import { visit } from 'unist-util-visit'
+import type { Node } from 'unist'
+import type { Code } from 'mdast'
 
 export const markdown = {
   /**
