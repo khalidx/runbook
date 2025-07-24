@@ -2,13 +2,27 @@
   "compilerOptions": {
     "rootDir": "src/",
     "outDir": "dist/",
-    "moduleResolution": "node",
-    "module": "CommonJS",
+    "lib": [ "ES2021" ],
+    "target": "ES2021",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "moduleDetection": "force",
+    "isolatedModules": true,
+    "verbatimModuleSyntax": true,
     "esModuleInterop": true,
-    "lib": [ "ES2019" ],
-    "target": "ES2019",
     "importHelpers": true,
-    "forceConsistentCasingInFileNames": true,
-    "strict": true
-  }
+    "skipLibCheck": true,
+    "sourceMap": true,
+    "declaration": true,
+    "strict": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noPropertyAccessFromIndexSignature": true
+  },
+  "include": [
+    "src/**/*.ts"
+  ]
 }

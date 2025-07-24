@@ -66,8 +66,8 @@ Currently, `runbook run` supports the execution of `bash`, `powershell`, `javasc
 - `bash` blocks are executed with `bash`
 - `powershell` and `ps1` blocks are executed with `pwsh` or `powershell.exe`
 - `javascript` and `js` blocks are executed with `node`
-- `typescript` and `ts` blocks are executed with `npx ts-node`
-- `esm` and `es6` blocks are executed with `node --loader ts-node/esm`
+- `typescript` and `ts` blocks are executed with `bun`
+- `esm` and `es6` blocks are executed with `bun`
 - `python` blocks are executed with `python`
 - `go` blocks are executed with `go`
 

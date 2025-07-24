@@ -1,17 +1,14 @@
-import { dirname, resolve } from 'path'
-import type { Position } from 'unist'
+import { dirname, resolve } from 'node:path'
+import chalk from 'chalk'
 
-import files from '../features/files'
-import markdown from '../features/markdown'
-import handlebars from '../features/handlebars'
-import colors from '../features/colors'
-import fonts from '../features/fonts'
-import padding from '../features/padding'
-import plural from '../features/plural'
-import log from '../features/log'
-import { ApplicationError } from '../features/errors'
+import files from '../features/files.js'
+import markdown from '../features/markdown.js'
+import handlebars from '../features/handlebars.js'
+import plural from '../features/plural.js'
+import log from '../features/log.js'
+import { ApplicationError } from '../features/errors.js'
 
-import { ensureUniqueBlockSignatures } from '../rules/unique-block-signatures'
+import { ensureUniqueBlockSignatures } from '../rules/unique-block-signatures.js'
 
 export async function ls (options = { log: true, rules: true }) {
   const markdownFiles = await files.discover(['*.md'])
@@ -21,11 +18,13 @@ export async function ls (options = { log: true, rules: true }) {
       return {
         ...file,
         commands: await Promise.all(file.blocks.filter(block => isSupportedBlock({ block }) && block.meta?.includes('"')).map(async block => {
-          const name = getBlockName({ file, block })
-          const content = await getBlockContent({ file, block })
+          const location = `${file.path}:${block.position?.start.line}`
+          const name = getBlockName({ block: { meta: block.meta, location } })
+          const content = await getBlockContent({ block: { meta: block.meta, location, value: block.value } })
           const { args, template } = getBlockArgs({ block, content })
-          if (options.log) log.info(`${padding.middle(file.path, 12, '...', ' ')} | ${colors.green(name)} ${args.map(arg => `--${arg}`).join(' ')}`)
           return {
+            location,
+            locationAnsi: `${chalk.yellow(file.path)}:${block.position?.start.line}`,
             name,
             lang: normalizedLang(block),
             position: block.position,
@@ -34,27 +33,29 @@ export async function ls (options = { log: true, rules: true }) {
             template,
             args,
             signature: name + '/' + args.length + (args.length > 0 ? (':' + args.join('-')) : ''),
-            display: name + (args.length > 0 ? (' ' + args.map(arg => `--${arg}`).join(' ')) : '')
+            display: name + (args.length > 0 ? (' ' + args.map(arg => `--${arg}`).join(' ')) : ''),
+            displayAnsi: chalk.green(name) + (args.length > 0 ? (' ' + args.map(arg => `--${arg}`).join(' ')) : '')
           }
         }))
       }
     })))
   if (markdownFiles.length === 0) throw new ApplicationError(`No markdown files found in ${process.cwd()}`)
-  if (options.rules) ensureUniqueBlockSignatures(markdownFiles)
   const commands = markdownFiles.reduce<typeof markdownFiles[0]['commands']>((commands, file) => {
     file.commands.forEach(command => {
       commands.push(command)
+      if (options.log) log.info(`[${command.locationAnsi}] ${command.displayAnsi}`)
     })
     return commands
   }, [])
-  if (options.log) log.interactive(fonts.italic(`Discovered ${colors.green(markdownFiles.length)} ${plural.s('file', markdownFiles.length)} and ${colors.green(commands.length)} ${plural.s('command', commands.length)}.`))
+  if (options.rules) ensureUniqueBlockSignatures({ commands })
+  if (options.log) log.interactive(chalk.italic(`Discovered ${chalk.green(markdownFiles.length)} ${plural.s('file', markdownFiles.length)} and ${chalk.green(commands.length)} ${plural.s('command', commands.length)}.`))
   return {
     markdownFiles,
     commands
   }
 }
 
-function normalizedLang (block: { lang?: string }): string | undefined {
+function normalizedLang (block: { lang?: string | null }): string | null | undefined {
   if (block.lang === 'ps1') return 'powershell'
   if (block.lang === 'js') return 'javascript'
   if (block.lang === 'ts') return 'typescript'
@@ -62,28 +63,28 @@ function normalizedLang (block: { lang?: string }): string | undefined {
   return block.lang
 }
 
-function isSupportedBlock (params: { block: { lang?: string }}): boolean {
+function isSupportedBlock (params: { block: { lang?: string | null }}): boolean {
   const lang = normalizedLang(params.block)
   return (lang === 'bash' || lang === 'hbs' || lang === 'powershell' || lang === 'javascript' || lang === 'typescript' || lang === 'esm' || lang === 'python' || lang === 'go')
 }
 
-function getBlockName (params: { file: { path: string }, block: { meta?: string, position?: Position } }): string {
+function getBlockName (params: { block: { meta?: string | null, location: string } }): string {
   const names = params.block.meta?.match(/"([^"]*)"/g)
-  if (names?.length !== 1) throw new ApplicationError(`[${params.file.path}:${params.block.position?.start.line}] A code block must have exactly one name`)
+  if (names?.length !== 1) throw new ApplicationError(`[${params.block.location}] A code block must have exactly one name`)
   const name = names[0].substring(1, names[0].length - 1)
   return name
 }
 
-async function getBlockContent (params: { file: { path: string }, block: { meta?: string, position?: Position, value: string }}): Promise<string> {
+async function getBlockContent (params: { block: { meta?: string | null, location: string, value: string }}): Promise<string> {
   const paths = params.block.meta?.match(/(file):\/\/(.+)/g)
   if (!paths || paths.length === 0) return params.block.value
-  if (paths.length !== 1) throw new ApplicationError(`[${params.file.path}:${params.block.position?.start.line}] A code block can specify only one file path`)
-  if (params.block.value.trim()) throw new ApplicationError(`[${params.file.path}:${params.block.position?.start.line}] A code block that specifies a file path must be empty`)
+  if (paths.length !== 1) throw new ApplicationError(`[${params.block.location}] A code block can specify only one file path`)
+  if (params.block.value.trim()) throw new ApplicationError(`[${params.block.location}] A code block that specifies a file path must be empty`)
   const path = paths[0].substring('file://'.length)
   return await files.read(path, 'utf-8')
 }
 
-function getBlockArgs (params: { block: { meta?: string, lang?: string }, content: string }): { args: string[], template?: ReturnType<typeof handlebars.template> } {
+function getBlockArgs (params: { block: { meta?: string | null, lang?: string | null }, content: string }): { args: string[], template?: ReturnType<typeof handlebars.template> } {
   if (params.block.lang === 'hbs' || params.block.meta?.startsWith('hbs')) {
     const args = handlebars.args(params.content)
     const template = handlebars.template(params.content)

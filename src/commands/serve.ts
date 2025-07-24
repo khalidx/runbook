@@ -1,12 +1,12 @@
-import { basename } from 'path'
+import { basename } from 'node:path'
+import chalk from 'chalk'
 import Koa from 'koa'
 import KoaRouter from '@koa/router'
 
-import colors from '../features/colors'
-import html from '../features/html'
-import log from '../features/log'
+import html from '../features/html.js'
+import log from '../features/log.js'
 
-import { ls } from '../commands/ls'
+import { ls } from '../commands/ls.js'
 
 export async function serve () {
   const router = new KoaRouter()
@@ -24,7 +24,7 @@ export async function serve () {
   const app = new Koa()
   app.use(router.routes()).use(router.allowedMethods())
   app.listen(port, () => {
-    log.info(`${colors.blue('runbook')} is listening on port ${port} ...`)
+    log.info(`${chalk.blue('runbook')} is listening on port ${port} ...`)
   })
 }
 

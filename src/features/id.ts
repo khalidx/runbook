@@ -1,3 +1,3 @@
-import { v4 as uuid } from 'uuid'
+import { randomUUID } from 'node:crypto'
 
-export default uuid
+export default randomUUID

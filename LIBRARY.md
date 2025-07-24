@@ -35,7 +35,7 @@ runbook run generate password --length 20
 ```
 
 ```javascript hbs "generate password"
-const { randomFillSync } = require('crypto')
+import { randomFillSync } from 'node:crypto'
 
 const generatePassword = (
   length = {{ length }},

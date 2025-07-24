@@ -1,81 +1,96 @@
-import { resolve } from 'path'
-import { execFileSync } from 'child_process'
-import yargs from 'yargs'
-import shell from 'shelljs'
+import { execFileSync, type StdioOptions } from 'node:child_process'
+import chalk from 'chalk'
+import minimist from 'minimist'
+import which from 'which'
 
-import files from '../features/files'
-import id from '../features/id'
-import colors from '../features/colors'
-import log from '../features/log'
-import { ApplicationError } from '../features/errors'
+import files from '../features/files.js'
+import id from '../features/id.js'
+import log from '../features/log.js'
+import { ApplicationError } from '../features/errors.js'
 
-import { ls } from '../commands/ls'
+import { ls } from '../commands/ls.js'
+import padding from '../features/padding.js'
 
-export async function run (args: string[]) {
-  const argv = yargs(args).argv
+const w = (command: string) => which.sync(command, { nothrow: true }) ? true : false
+
+export async function run (params: { args: string[], options?: Partial<{ stdio: StdioOptions, log: false }> }) {
+  const argv = minimist(params.args)
   const suggestions = []
-  const { markdownFiles } = await ls({ log: false, rules: true })
-  for (let file of markdownFiles) {
-    for (let command of file.commands) {
-      // name check
-      if (command.name !== argv._.join(' ')) continue
-      // args check
-      const { _, $0, ...options } = argv
-      if (command.args.some(arg => !argv[arg]) || Object.keys(options).some(option => !command.args.includes(option))) {
-        suggestions.push({ file: { path: file.path }, command })
-        continue
+  const { commands } = await ls({ log: false, rules: true })
+  for (let command of commands) {
+    // name check
+    if (command.name !== argv._.join(' ')) {
+      if (command.name.split(' ').some(word => argv._.includes(word))) {
+        suggestions.push({ command })
       }
-      if (command.lang === 'bash' || command.lang === 'hbs') {
-        if (!shell.which('bash')) throw new ApplicationError(`[${file.path}:${command.position?.start.line}] Could not find "bash" on this system`)
-      } else if (command.lang === 'powershell') {
-        if (!shell.which('powershell.exe') && !shell.which('pwsh')) throw new ApplicationError(`[${file.path}:${command.position?.start.line}] Could not find "powershell.exe" on this system`)
-      } else if (command.lang === 'javascript') {
-        if (!shell.which('node')) throw new ApplicationError(`[${file.path}:${command.position?.start.line}] Could not find "node" on this system`)
-      } else if (command.lang === 'typescript') {
-        if (!shell.which('node')) throw new ApplicationError(`[${file.path}:${command.position?.start.line}] Could not find "node" on this system`)
-        if (!shell.which('npx')) throw new ApplicationError(`[${file.path}:${command.position?.start.line}] Could not find "npx" on this system`)
-      } else if (command.lang === 'esm') {
-        if (!shell.which('node')) throw new ApplicationError(`[${file.path}:${command.position?.start.line}] Could not find "node" on this system`)
-        if (!shell.which('ts-node') && !shell.test('-d', './node_modules/ts-node/')) throw new ApplicationError(`[${file.path}:${command.position?.start.line}] Could not find "ts-node" on this system`)
-      } else if (command.lang === 'python') {
-        if (!shell.which('python')) throw new ApplicationError(`[${file.path}:${command.position?.start.line}] Could not find "python" on this system`)
-      } else if (command.lang === 'go') {
-        if (!shell.which('go')) throw new ApplicationError(`[${file.path}:${command.position?.start.line}] Could not find "go" on this system`)
-      } else throw new ApplicationError(`[${file.path}:${command.position?.start.line}] Unsupported block language: ${command.lang}`)
-      log.interactive(`[${file.path}:${command.position?.start.line}] Running ${colors.green(command.name)}`)
-      const executableFileName = 'runbook-' + id() +
-        (command.lang === 'powershell' ? '.ps1' : '') +
-        (command.lang === 'esm' ? '.ts' : '') +
-        (command.lang === 'go' ? '.go' : '')
-      await files.write(executableFileName, command.template?.(options) || command.script)
-      await files.chmod(executableFileName, 0o755)
-      try {
-        if (command.lang === 'bash' || command.lang === 'hbs') execFileSync(resolve(executableFileName), { stdio: 'inherit' })
-        else if (command.lang === 'powershell') execFileSync(shell.which('pwsh') ? 'pwsh' : 'powershell.exe', [ '-File', executableFileName ], { stdio: 'inherit' })
-        else if (command.lang === 'javascript') execFileSync('node', [ executableFileName ], { stdio: 'inherit' })
-        else if (command.lang === 'typescript') execFileSync('npx', [ 'ts-node', executableFileName ], { stdio: 'inherit' })
-        else if (command.lang === 'esm') execFileSync('node', [ '--loader', 'ts-node/esm', executableFileName ], { stdio: 'inherit' })
-        else if (command.lang === 'python') execFileSync('python', [ executableFileName ], { stdio: 'inherit' })
-        else if (command.lang === 'go') execFileSync('go', [ 'run', executableFileName ], { stdio: 'inherit' })
-        else throw new ApplicationError(`[${file.path}:${command.position?.start.line}] Unsupported block language (not executable): ${command.lang}`)
-      } catch (error) {
-        if (error instanceof Error && error.message.startsWith('Command failed') && error.message.includes(executableFileName)) {
-          const { status, pid } = error as { status?: number, pid?: number }
-          if (status !== undefined && pid !== undefined) {
-            log.errorDebug(error)
-            throw new ApplicationError(`[${file.path}:${command.position?.start.line}] Command with pid [${pid}] failed with exit status [${status}]`)
-          }
-        }
-        throw error
-      } finally {
-        await files.delete(executableFileName)
-      }
-      return
+      continue
     }
+    // args check
+    const { _, '--': unused, ...options } = argv
+    if (command.args.some(arg => !options[arg]) || Object.keys(options).some(option => !command.args.includes(option))) {
+      suggestions.push({ command })
+      continue
+    }
+    if (command.lang === 'bash' || command.lang === 'hbs') {
+      if (!w('bash')) throw new ApplicationError(`[${command.location}] Could not find "bash" on this system`)
+    } else if (command.lang === 'powershell') {
+      if (!w('powershell.exe') && !w('pwsh')) throw new ApplicationError(`[${command.location}] Could not find "powershell.exe" on this system`)
+    } else if (command.lang === 'javascript') {
+      if (!w('node')) throw new ApplicationError(`[${command.location}] Could not find "node" on this system`)
+    } else if (command.lang === 'typescript') {
+      if (!w('bun')) throw new ApplicationError(`[${command.location}] Could not find "bun" on this system`)
+    } else if (command.lang === 'esm') {
+      if (!w('bun')) throw new ApplicationError(`[${command.location}] Could not find "bun" on this system`)
+    } else if (command.lang === 'python') {
+      if (!w('python')) throw new ApplicationError(`[${command.location}] Could not find "python" on this system`)
+    } else if (command.lang === 'go') {
+      if (!w('go')) throw new ApplicationError(`[${command.location}] Could not find "go" on this system`)
+    } else throw new ApplicationError(`[${command.location}] Unsupported block language: ${command.lang}`)
+    if (params.options?.log !== false) {
+      log.interactive(
+        `[${command.locationAnsi}] ${command.displayAnsi} (${chalk.blue.italic('running')})` + '\n' +
+        `[${command.locationAnsi}] ${command.displayAnsi} (${chalk.blue.italic(command.lang)}) ${chalk.gray(padding.middle(JSON.stringify(command.script), 72, '...', ' '))}`
+      )
+    }
+    const executableFileName = 'runbook-' + id() + (
+      (command.lang === 'bash' || command.lang === 'hbs') ? '.sh' :
+      (command.lang === 'powershell') ? '.ps1' :
+      (command.lang === 'javascript') ? '.js' :
+      (command.lang === 'typescript') ? '.ts' :
+      (command.lang === 'esm') ? '.ts' :
+      (command.lang === 'python') ? '.py' :
+      (command.lang === 'go') ? '.go' :
+      ''
+    )
+    await files.write(executableFileName, command.template?.(options) || command.script)
+    try {
+      const stdio = params.options?.stdio ?? 'inherit'
+      if (command.lang === 'bash' || command.lang === 'hbs') execFileSync('bash', [ executableFileName ], { stdio })
+      else if (command.lang === 'powershell') execFileSync(w('pwsh') ? 'pwsh' : 'powershell.exe', [ '-File', executableFileName ], { stdio })
+      else if (command.lang === 'javascript') execFileSync('node', [ executableFileName ], { stdio })
+      else if (command.lang === 'typescript') execFileSync('bun', [ 'run', executableFileName ], { stdio })
+      else if (command.lang === 'esm') execFileSync('bun', [ 'run', executableFileName ], { stdio })
+      else if (command.lang === 'python') execFileSync('python', [ executableFileName ], { stdio })
+      else if (command.lang === 'go') execFileSync('go', [ 'run', executableFileName ], { stdio })
+      else throw new ApplicationError(`[${command.location}] Unsupported block language (not executable): ${command.lang}`)
+    } catch (error) {
+      if (error && typeof error === 'object' && 'status' in error && 'pid' in error) {
+        if ((error.status === null || typeof error.status === 'number') && typeof error.pid === 'number') {
+          log.errorDebug(error)
+          throw new ApplicationError(`[${command.location}] Command with pid [${error.pid}] failed with exit status [${error.status}]`, { exitCode: error.status ?? 1 })
+        }
+      }
+      throw error
+    } finally {
+      await files.delete(executableFileName)
+    }
+    return
   }
-  if (suggestions.length === 0) {}
-  const suggestionsMessage = suggestions.reduce((text, suggestion) => {
-    return text + '\n' + `${suggestion.file.path} | ${colors.green(suggestion.command.name)} ${(suggestion.command.args || []).map(arg => `--${arg}`).join(' ')}`
-  }, '')
-  throw new ApplicationError(`No command found that matches the provided arguments.${suggestionsMessage ? ` Here are some suggestions:${suggestionsMessage}` : ''}`)
+  if (suggestions.length > 0 && params.options?.log !== false) {
+    const suggestionsMessage = suggestions.reduce((text, suggestion) => {
+      return text + '\n' + `[${suggestion.command.locationAnsi}] ${suggestion.command.displayAnsi}`
+    }, '')
+    log.interactive(`Here are some suggestions:${suggestionsMessage}`)
+  }
+  throw new ApplicationError('No command found that matches the provided arguments')
 }

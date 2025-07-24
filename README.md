@@ -10,7 +10,7 @@ Executable markdown documents that you can run, template, and share!
 
 ## quickstart
 
-```bash "install"
+```bash "install from npm"
 npm install -g @khalidx/runbook
 ```
 

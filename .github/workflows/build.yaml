@@ -1,0 +1,68 @@
+name: build
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        node-version: [22.x]
+        os: [ubuntu-latest]
+        arch: [x64]
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      name: Use Node.js ${{ matrix.node-version }}
+      with:
+        node-version: ${{ matrix.node-version }}
+    - run: npm ci
+    - run: npm run test
+
+  test-all:
+    needs: test
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        node-version: [20.x, 22.x, 24.x]
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        arch: [x64, arm64]
+        exclude:
+          - os: windows-latest
+            arch: arm64
+          - os: ubuntu-latest
+            arch: arm64
+          - os: macos-latest
+            arch: x64
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      name: Use Node.js ${{ matrix.node-version }}
+      with:
+        node-version: ${{ matrix.node-version }}
+    - run: npm ci
+    - if: matrix.node-version == '20.x'
+      run: node --test
+    - if: matrix.node-version != '20.x'
+      run: npm run test
+    - run: node dist/cli.js ls
+    - run: node bin/cli.cjs ls
+    - run: node --import tsx/esm src/cli.ts ls
+    - run: npx tsx src/cli.ts ls
+    - run: npm link && runbook ls && rb ls
+    - run: npm install -g bun
+    - run: bun test
+    - run: bun run src/cli.ts -- ls
+    - shell: bash
+      run: |
+        set -eoux pipefail
+        platform="$(echo "${{ matrix.os }}" | sed -E 's/^ubuntu(-.*)?$/linux/; s/^macos(-.*)?$/darwin/; s/^windows(-.*)?$/windows/;')-${{ matrix.arch }}"
+        binary="./exec/runbook-$platform"
+        bun run "build:native:binaries:$platform"
+        chmod +x "$binary"
+        "$binary" ls
